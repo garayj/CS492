@@ -1,0 +1,88 @@
+{
+  "businessCard": {
+    "image": "assets/images/portrait.jpg",
+    "name": "Jose Garay",
+    "title": "Software Engineer",
+    "phone": "(707) 372-0209",
+    "email": "garayj@oregonstate.edu",
+    "github": "https://github.com/garayj"
+  },
+  "resume": {
+    "header": {
+      "name": "Jose Garay",
+      "email": "garayjrjose@gmail.com",
+      "github": "https://github.com/jrgaray"
+    },
+    "job history": [
+      {
+        "title": "Full Stack Developer",
+        "company": "Cambria Solutions",
+        "start": "2019",
+        "end": "Current",
+        "city": "Sacramento",
+        "state": "CA",
+        "description": "Specialize in React/Redux front-end with GraphQL and Sequelize back-end application development. Conduct code reviews, provide timely estimates, and present demonstrations of proof of concepts."
+      },
+      {
+        "title": "Undergraduate Teaching Assistant",
+        "company": "Oregon State University",
+        "start": "2020",
+        "end": "2020",
+        "city": "Oregon",
+        "state": "OR",
+        "description": "Lead and conducted discussions as well as answered questions. Graded discussions, and helped answer student questions in office hours."
+      },
+      {
+        "title": "Staff Research Associate II",
+        "company": "UCD Mouse Biology Program",
+        "start": "2018",
+        "end": "2019",
+        "city": "Davis",
+        "state": "CA",
+        "description": "Create mutatnt mice."
+      },
+      {
+        "title": "Molecular Biologist I",
+        "company": "Novogene",
+        "start": "2017",
+        "end": "2017",
+        "city": "Sacramento",
+        "state": "CA",
+        "description": "Whole genome sequencing using NGS(Next Generation Sequencing)"
+      },
+      {
+        "title": "Contract Assignment",
+        "company": "Genentech",
+        "start": "2016",
+        "end": "2017",
+        "city": "Vacaville",
+        "state": "CA",
+        "description": "Quality Control for entire plant drug product."
+      },
+      {
+        "title": "Staff Research Associate II",
+        "company": "UCD Mouse Biology Program",
+        "start": "2012",
+        "end": "2016",
+        "city": "Davis",
+        "state": "CA",
+        "description": "Create mutant mice."
+      }
+    ]
+  },
+  "predictor": {
+    "options": [
+      "Hard Pass",
+      "Looks good",
+      "Maybe, seems likely",
+      "Possibly, but unlikely",
+      "It may or may not happen",
+      "Ask someone else",
+      "Definitely yes",
+      "Try again later"
+    ],
+    "clickMessage": "ask em something",
+    "title": "Call Me... Maybe?"
+  },
+  "title": "Call Me Maybe"
+}
