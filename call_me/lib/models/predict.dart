@@ -1,17 +1,9 @@
 import 'dart:math';
 
 class Predict {
+  Predict(this.predictions);
   final random = Random();
-  final List<String> predictions = [
-    'Hard Pass',
-    'Looks good',
-    'Maybe, seems likely',
-    'Possibly, but unlikely',
-    'It may or may not happen',
-    'Ask someone else',
-    'Definitely yes',
-    'Try again later'
-  ];
+  final List<String> predictions;
   String _prediction = '';
   // State functions
   void newPrediction() {

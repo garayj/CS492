@@ -1,28 +1,29 @@
-import 'package:call_me/models/predict.dart';
 import 'package:flutter/material.dart';
+import 'package:call_me/models/predict.dart';
 import 'package:call_me/styles.dart';
 
 class Predictor extends StatefulWidget {
+  const Predictor({Key key, this.predictorProps, this.predictor})
+      : super(key: key);
+  final Map<String, dynamic> predictorProps;
+  final Predict predictor;
   @override
   State createState() => _PredictorState();
 }
 
 class _PredictorState extends State<Predictor> {
-  // Constants
-  static const String title = "Call me... Maybe?";
-  static const String instructions = "Ask a question... tap for an answer.";
-  final predict = Predict();
-
   // Main content of the Predictor screen.
   List<Widget> _generatePredictorContent(BuildContext context) {
     final styles = Styles(context: context);
     return [
-      styles.symPad(Text(title, style: styles.headline5)),
-      GestureDetector(
-          onTap: () => setState(() => predict.newPrediction()),
-          child: styles.symPad(Text(instructions, style: styles.bodyText2))),
       styles.symPad(
-        Text('${predict.prediction}', style: styles.headline5),
+          Text(widget.predictorProps["title"], style: styles.headline5)),
+      GestureDetector(
+          onTap: () => setState(() => widget.predictor.newPrediction()),
+          child: styles.symPad(Text(widget.predictorProps["clickMessage"],
+              style: styles.bodyText2))),
+      styles.symPad(
+        Text('${widget.predictor.prediction}', style: styles.headline5),
       )
     ];
   }
