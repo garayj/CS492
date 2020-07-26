@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:journal/screens/new_entry.dart';
-import 'package:journal/screens/new_journal_entries.dart';
+import 'package:journal/screens/journal_entries.dart';
+import 'package:journal/models/journal.dart';
 
 class App extends StatelessWidget {
+  final journal = Journal.getInstance();
   static final routes = {
-    NewJournalEntries.routeName: (context) => NewJournalEntries(),
+    JournalEntries.routeName: (context) => JournalEntries(),
     NewEntry.routeName: (context) => NewEntry()
   };
   @override

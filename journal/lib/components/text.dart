@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-Padding Function(String, [int]) text = (label, [lines]) => Padding(
-      padding: EdgeInsets.fromLTRB(30.0, 5.0, 30.0, 5.0),
-      child: TextFormField(
-        minLines: lines ?? 1,
-        maxLines: lines ?? 1,
-        decoration: InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: label,
-        ),
-      ),
-    );
+final text =
+    ({label, validator, onSave, lines = 1, numberField = false}) => Padding(
+          padding: EdgeInsets.fromLTRB(30.0, 5.0, 30.0, 5.0),
+          child: TextFormField(
+            keyboardType: numberField ? TextInputType.number : null,
+            inputFormatters:
+                numberField ? [WhitelistingTextInputFormatter.digitsOnly] : [],
+            onSaved: onSave,
+            validator: validator,
+            minLines: lines,
+            maxLines: lines,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: label,
+            ),
+          ),
+        );
