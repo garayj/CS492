@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:journal/screens/new_entry.dart';
+import 'package:journal/screens/new_journal_entry.dart';
 import 'package:journal/screens/journal_entries.dart';
 import 'package:journal/models/journal.dart';
+import 'package:journal/screens/journal_entry_detail.dart';
 
 class App extends StatefulWidget {
   static Map<String, Widget Function(BuildContext)> routes(
       handleDarkModeToggle) {
     return {
+      JournalEntryDetails.routeName: (context) =>
+          JournalEntryDetails(handleDarkModeToggle),
       JournalEntries.routeName: (context) =>
           JournalEntries(handleDarkModeToggle),
-      NewEntry.routeName: (context) => NewEntry(handleDarkModeToggle)
+      NewJournalEntry.routeName: (context) =>
+          NewJournalEntry(handleDarkModeToggle)
     };
   }
-
-  // static Map<String, Widget> routes = (Function handleDarkModeToggle) => ({});
 
   @override
   AppState createState() => AppState();

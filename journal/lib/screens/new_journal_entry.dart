@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:journal/models/journal.dart';
 import 'package:journal/models/journal_entry.dart';
 import 'package:journal/components/settings_drawer.dart';
 import 'package:journal/styles.dart';
 import 'package:journal/components/form.dart';
+import 'package:journal/components/settings_button.dart';
 
-class NewEntry extends StatelessWidget {
-  NewEntry(this.handleDarkModeToggle);
+class NewJournalEntry extends StatelessWidget {
+  NewJournalEntry(this.handleDarkModeToggle);
   static final routeName = "new entry";
 
   static const String title = 'New Journal Entry';
@@ -22,7 +22,8 @@ class NewEntry extends StatelessWidget {
     Function addEntry = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: AppBar(
-        title: Text(NewEntry.title),
+        title: Text(NewJournalEntry.title),
+        actions: settingsButton,
       ),
       endDrawer: SettingsDrawer(handleToggle: handleDarkModeToggle),
       body: form(_formKey, journalEntry, addEntry),

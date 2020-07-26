@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:journal/app.dart';
+import 'package:journal/components/settings_button.dart';
 import 'package:journal/styles.dart';
-import 'package:journal/screens/new_entry.dart';
+import 'package:journal/screens/new_journal_entry.dart';
 import 'package:journal/components/settings_drawer.dart';
 import 'package:journal/models/journal.dart';
+import 'package:journal/screens/journal_entry_detail.dart';
 
 class JournalEntries extends StatefulWidget {
   final void Function(bool) handleDarkModeToggle;
@@ -34,7 +35,9 @@ class _JournalEntries extends State<JournalEntries> {
     Widget journalEntries = ListView.builder(
       itemCount: journal.entries.length,
       itemBuilder: (context, index) => ListTile(
-        onTap: () => print('tapped'),
+        onTap: () => Navigator.of(context).pushNamed(
+            JournalEntryDetails.routeName,
+            arguments: journal.entries[index]),
         title: Text('${journal.entries[index].title}'),
         subtitle: Text('${journal.entries[index].body}'),
       ),
@@ -47,19 +50,9 @@ class _JournalEntries extends State<JournalEntries> {
       setState(() => journal.addJournalEntry(entry));
     }
 
-    final iconButton = (context) => IconButton(
-          icon: Icon(Icons.settings),
-          onPressed: () => Scaffold.of(context).openEndDrawer(),
-        );
-
     return Scaffold(
       appBar: AppBar(
-        actions: <Widget>[
-          // https://stackoverflow.com/questions/51957960/how-to-change-the-enddrawer-icon-in-flutter
-          Builder(
-            builder: (context) => iconButton(context),
-          )
-        ],
+        actions: settingsButton,
         title: title,
       ),
       endDrawer: drawer,
@@ -67,7 +60,7 @@ class _JournalEntries extends State<JournalEntries> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context)
-              .pushNamed(NewEntry.routeName, arguments: setNewEntry);
+              .pushNamed(NewJournalEntry.routeName, arguments: setNewEntry);
         },
         tooltip: 'Add new journal entry',
         child: Icon(Icons.add),
