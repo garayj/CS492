@@ -1,21 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:journal/app.dart';
 
-class SettingsDrawer extends StatefulWidget {
-  const SettingsDrawer({Key key}) : super(key: key);
-
-  @override
-  _SettingsDrawerState createState() => _SettingsDrawerState();
-}
-
-class _SettingsDrawerState extends State<SettingsDrawer> {
-  // State
-  bool _value = false;
+class SettingsDrawer extends StatelessWidget {
+  const SettingsDrawer({this.handleToggle});
+  final handleToggle;
 
   @override
   Widget build(BuildContext context) {
-    // On Change handler.
+    AppState appState = context.findAncestorStateOfType<AppState>();
     final handleChange = (bool input) {
-      setState(() => _value = _value = input);
+      handleToggle(input);
     };
 
     return Drawer(
@@ -27,7 +21,7 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
           ),
           SwitchListTile(
             title: Text('Dark Mode'),
-            value: _value,
+            value: appState.isDarkMode,
             onChanged: handleChange,
           ),
         ],
