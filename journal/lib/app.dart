@@ -3,15 +3,22 @@ import 'package:journal/screens/new_journal_entry.dart';
 import 'package:journal/screens/journal_entries.dart';
 import 'package:journal/models/journal.dart';
 import 'package:journal/screens/journal_entry_detail.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class App extends StatefulWidget {
+  // Route handler.
   static Map<String, Widget Function(BuildContext)> routes(
       handleDarkModeToggle) {
     return {
-      JournalEntryDetails.routeName: (context) =>
-          JournalEntryDetails(handleDarkModeToggle),
+      // Main Entries route.
       JournalEntries.routeName: (context) =>
           JournalEntries(handleDarkModeToggle),
+
+      // Details route
+      JournalEntryDetails.routeName: (context) =>
+          JournalEntryDetails(handleDarkModeToggle),
+
+      // New journal entry route.
       NewJournalEntry.routeName: (context) =>
           NewJournalEntry(handleDarkModeToggle)
     };
@@ -22,20 +29,37 @@ class App extends StatefulWidget {
 }
 
 class AppState extends State<App> {
+  // State variables
   final journal = Journal.getInstance();
-
   bool isDarkMode;
 
+// Init State.
   @override
   void initState() {
     super.initState();
-    isDarkMode = false;
+    initTheme();
+  }
+
+  // Async function to set the theme.
+  void initTheme() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() => isDarkMode = prefs.getBool('darkMode') ?? false);
   }
 
   @override
   Widget build(BuildContext context) {
-    void Function(bool) handleDarkModeToggle =
-        (bool input) => setState(() => isDarkMode = input);
+    // Dark mode handler.
+    void Function(bool) handleDarkModeToggle = (bool input) async {
+      setState(() => isDarkMode = input);
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setBool('darkMode', input);
+    };
+
+    // Get the appropriate theme.
+    final getTheme = () =>
+        isDarkMode != null && isDarkMode ? ThemeMode.dark : ThemeMode.system;
+
+    // Widget to return.
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -44,9 +68,7 @@ class AppState extends State<App> {
       ),
       darkTheme: ThemeData.dark(),
       routes: App.routes(handleDarkModeToggle),
-      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.system,
-
-      // home: NewJournalEntries(title: 'Flutter Demo Home Page'),
+      themeMode: getTheme(),
     );
   }
 }
