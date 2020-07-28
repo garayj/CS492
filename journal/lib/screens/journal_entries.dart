@@ -1,70 +1,97 @@
 import 'package:flutter/material.dart';
+import 'package:journal/components/journal_entry_details.dart';
 import 'package:journal/components/settings_button.dart';
-import 'package:journal/styles.dart';
 import 'package:journal/screens/new_journal_entry.dart';
 import 'package:journal/components/settings_drawer.dart';
 import 'package:journal/models/journal.dart';
-import 'package:journal/screens/journal_entry_detail.dart';
+import 'package:journal/components/journal_entries.dart';
+import 'package:journal/components/no_journal_entries.dart';
 
-class JournalEntries extends StatefulWidget {
+class MainScreen extends StatefulWidget {
   final void Function(bool) handleDarkModeToggle;
   static const String routeName = "/";
   static const String title = 'Journal';
-  JournalEntries(this.handleDarkModeToggle);
+  MainScreen(this.handleDarkModeToggle);
 
   @override
-  _JournalEntries createState() => _JournalEntries();
+  _MainScreen createState() => _MainScreen();
 }
 
-class _JournalEntries extends State<JournalEntries> {
-  static final styles = Styles();
-
+class _MainScreen extends State<MainScreen> {
   final journal = Journal.getInstance();
-
-  Widget noEntries = styles.centerColumn([
-    Icon(Icons.book, size: 100.0),
-    Text('Journal'),
-  ]);
 
   @override
   Widget build(BuildContext context) {
-    final title = Text(JournalEntries.title);
-
-    final drawer = SettingsDrawer(handleToggle: widget.handleDarkModeToggle);
-
-    Widget journalEntries = ListView.builder(
-      itemCount: journal.entries.length,
-      itemBuilder: (context, index) => ListTile(
-        onTap: () => Navigator.of(context).pushNamed(
-            JournalEntryDetails.routeName,
-            arguments: journal.entries[index]),
-        title: Text('${journal.entries[index].title}'),
-        subtitle: Text('${journal.entries[index].body}'),
-      ),
-    );
-
-    Widget journalPreview =
-        journal.entries.length == 0 ? noEntries : journalEntries;
-
+    // State handler
     void setNewEntry(entry) {
       setState(() => journal.addJournalEntry(entry));
     }
+
+    // Widgets
+    Widget title = Text(MainScreen.title);
+    Widget endDrawer =
+        SettingsDrawer(handleToggle: widget.handleDarkModeToggle);
+
+    Widget fab = FloatingActionButton(
+      onPressed: () {
+        Navigator.of(context)
+            .pushNamed(NewJournalEntry.routeName, arguments: setNewEntry);
+      },
+      tooltip: 'Add new journal entry',
+      child: Icon(Icons.add),
+    );
 
     return Scaffold(
       appBar: AppBar(
         actions: settingsButton,
         title: title,
       ),
-      endDrawer: drawer,
-      body: journalPreview,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context)
-              .pushNamed(NewJournalEntry.routeName, arguments: setNewEntry);
+      endDrawer: endDrawer,
+      body: Container(child: LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxWidth >= 600)
+            return HorizontalLayout();
+          else
+            return journalEntries(journal);
         },
-        tooltip: 'Add new journal entry',
-        child: Icon(Icons.add),
-      ),
+      )),
+      floatingActionButton: fab,
     );
+  }
+}
+
+class HorizontalLayout extends StatefulWidget {
+  @override
+  _HorizontalLayoutState createState() => _HorizontalLayoutState();
+}
+
+class _HorizontalLayoutState extends State<HorizontalLayout> {
+  final journal = Journal.getInstance();
+  int index = 0;
+
+  void setJournalEntry(idx) {
+    setState(() => index = idx);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return journal.length == 0
+        ? journalEntries(journal)
+        : Container(
+            child: Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    child: journalEntries(journal, action: setJournalEntry),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    child: journalEntryDetails(journal.entries[index]),
+                  ),
+                )
+              ],
+            ),
+          );
   }
 }

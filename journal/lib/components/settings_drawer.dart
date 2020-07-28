@@ -12,20 +12,26 @@ class SettingsDrawer extends StatelessWidget {
       handleToggle(input);
     };
 
+    List<Widget> children = [
+      DrawerHeader(
+        child: Text('Settings'),
+        decoration: BoxDecoration(color: Colors.blue),
+      ),
+      SwitchListTile(
+        title: Text('Dark Mode'),
+        value: appState.isDarkMode,
+        onChanged: handleChange,
+      ),
+    ];
+
     return Drawer(
       child: ListView(
-        children: <Widget>[
-          DrawerHeader(
-            child: Text('Settings'),
-            decoration: BoxDecoration(color: Colors.blue),
-          ),
-          SwitchListTile(
-            title: Text('Dark Mode'),
-            value: appState.isDarkMode,
-            onChanged: handleChange,
-          ),
-        ],
+        children: children,
       ),
     );
   }
+}
+
+Widget endDrawer(handleToggle) {
+  return SettingsDrawer(handleToggle: handleToggle);
 }

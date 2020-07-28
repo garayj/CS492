@@ -11,8 +11,7 @@ class App extends StatefulWidget {
       handleDarkModeToggle) {
     return {
       // Main Entries route.
-      JournalEntries.routeName: (context) =>
-          JournalEntries(handleDarkModeToggle),
+      MainScreen.routeName: (context) => MainScreen(handleDarkModeToggle),
 
       // Details route
       JournalEntryDetails.routeName: (context) =>
@@ -59,16 +58,24 @@ class AppState extends State<App> {
     final getTheme = () =>
         isDarkMode != null && isDarkMode ? ThemeMode.dark : ThemeMode.system;
 
-    // Widget to return.
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      darkTheme: ThemeData.dark(),
-      routes: App.routes(handleDarkModeToggle),
-      themeMode: getTheme(),
+    // Widget to return. Use future builder to await the data from shared prefs.
+    return FutureBuilder(
+      future: SharedPreferences.getInstance(),
+      builder: (_, snapshot) {
+        if (snapshot.hasData) {
+          return MaterialApp(
+            title: 'Flutter Demo',
+            theme: ThemeData(
+              primarySwatch: Colors.blue,
+              visualDensity: VisualDensity.adaptivePlatformDensity,
+            ),
+            darkTheme: ThemeData.dark(),
+            routes: App.routes(handleDarkModeToggle),
+            themeMode: getTheme(),
+          );
+        }
+        return CircularProgressIndicator();
+      },
     );
   }
 }

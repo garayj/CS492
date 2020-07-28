@@ -17,4 +17,5 @@ class Journal {
   }
 
   List<JournalEntry> get entries => _entries;
+  int get length => _entries.length;
 }
