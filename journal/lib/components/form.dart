@@ -1,17 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:journal/components/journal_entries.dart';
 import 'package:journal/models/journal_entry.dart';
 import 'package:journal/styles.dart';
+import 'package:journal/app.dart';
 import 'package:journal/components/text.dart';
+import 'package:sqflite/sqflite.dart';
 
 final styles = Styles();
 
-Widget raisedButton(_formKey, journalEntry, context) {
+Widget raisedButton(_formKey, journalEntry, BuildContext context) {
   Function addEntry = ModalRoute.of(context).settings.arguments;
+  AppState state = context.findAncestorStateOfType<AppState>();
   return RaisedButton(
-    onPressed: () {
+    onPressed: () async {
       if (_formKey.currentState.validate()) {
         _formKey.currentState.save();
         journalEntry.setDate = new DateTime.now();
+        final db = await openDatabase(
+          'journal.sqlite3.db',
+          version: 1,
+          onCreate: (db, version) async => await db.execute(state.schema),
+        );
+        await db.transaction((txn) async => await txn.rawInsert(
+              'INSERT INTO journal_entries(title, body, rating, date) VALUES(?, ?, ?, ?);',
+              [
+                journalEntry.title,
+                journalEntry.body,
+                journalEntry.rating,
+                journalEntry.date.toString()
+              ],
+            ));
+        await db.close();
         addEntry(journalEntry);
         Navigator.of(context).pop();
       }

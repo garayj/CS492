@@ -18,4 +18,5 @@ class Journal {
 
   List<JournalEntry> get entries => _entries;
   int get length => _entries.length;
+  set setJournal(List<JournalEntry> journal) => _entries = journal;
 }

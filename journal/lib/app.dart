@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:journal/screens/new_journal_entry.dart';
-import 'package:journal/screens/journal_entries.dart';
+import 'package:journal/screens/main_screen.dart';
 import 'package:journal/models/journal.dart';
 import 'package:journal/screens/journal_entry_detail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:sqflite/sqlite_api.dart';
+import 'package:journal/models/journal_entry.dart';
 
 class App extends StatefulWidget {
+  App({this.schema});
+  final String schema;
   // Route handler.
   static Map<String, Widget Function(BuildContext)> routes(
       handleDarkModeToggle) {
@@ -29,18 +34,45 @@ class App extends StatefulWidget {
 
 class AppState extends State<App> {
   // State variables
-  final journal = Journal.getInstance();
+  Journal journal;
+  String schema;
   bool isDarkMode;
+  bool isLoading;
 
 // Init State.
   @override
   void initState() {
     super.initState();
+    isLoading = true;
     initTheme();
+    initJournal();
+  }
+
+  void initJournal() async {
+    journal = Journal.getInstance();
+    final Database db = await openDatabase(
+      'journal.sqlite3.db',
+      version: 1,
+      onCreate: (db, version) async => await db.execute(widget.schema),
+    );
+    List<Map> journalRecords =
+        await db.rawQuery('SELECT * FROM journal_entries;');
+
+    final journalEntries = journalRecords.map((record) {
+      return JournalEntry.init(
+        record['id'],
+        record['title'],
+        record['body'],
+        record['rating'],
+        DateTime.parse(record['date']),
+      );
+    }).toList();
+    journal.setJournal = journalEntries;
   }
 
   // Async function to set the theme.
   void initTheme() async {
+    schema = widget.schema;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() => isDarkMode = prefs.getBool('darkMode') ?? false);
   }
@@ -60,7 +92,8 @@ class AppState extends State<App> {
 
     // Widget to return. Use future builder to await the data from shared prefs.
     return FutureBuilder(
-      future: SharedPreferences.getInstance(),
+      future: Future.wait(
+          [SharedPreferences.getInstance(), openDatabase('journal.sqlite.db')]),
       builder: (_, snapshot) {
         if (snapshot.hasData) {
           return MaterialApp(
@@ -74,7 +107,12 @@ class AppState extends State<App> {
             themeMode: getTheme(),
           );
         }
-        return CircularProgressIndicator();
+        return Container(
+          color: Colors.white,
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
       },
     );
   }

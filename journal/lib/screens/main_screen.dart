@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:journal/components/appBar.dart';
 import 'package:journal/components/journal_entry_details.dart';
-import 'package:journal/components/settings_button.dart';
 import 'package:journal/screens/new_journal_entry.dart';
 import 'package:journal/components/settings_drawer.dart';
 import 'package:journal/models/journal.dart';
 import 'package:journal/components/journal_entries.dart';
-import 'package:journal/components/no_journal_entries.dart';
 
 class MainScreen extends StatefulWidget {
   final void Function(bool) handleDarkModeToggle;
@@ -28,7 +27,6 @@ class _MainScreen extends State<MainScreen> {
     }
 
     // Widgets
-    Widget title = Text(MainScreen.title);
     Widget endDrawer =
         SettingsDrawer(handleToggle: widget.handleDarkModeToggle);
 
@@ -42,10 +40,7 @@ class _MainScreen extends State<MainScreen> {
     );
 
     return Scaffold(
-      appBar: AppBar(
-        actions: settingsButton,
-        title: title,
-      ),
+      appBar: appBar(MainScreen.title),
       endDrawer: endDrawer,
       body: Container(child: LayoutBuilder(
         builder: (context, constraints) {
@@ -75,23 +70,24 @@ class _HorizontalLayoutState extends State<HorizontalLayout> {
 
   @override
   Widget build(BuildContext context) {
-    return journal.length == 0
-        ? journalEntries(journal)
-        : Container(
-            child: Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    child: journalEntries(journal, action: setJournalEntry),
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    child: journalEntryDetails(journal.entries[index]),
-                  ),
-                )
-              ],
+    // The horizontal layout.
+    final longLayout = Container(
+      child: Row(
+        children: [
+          Expanded(
+            child: Container(
+              child: journalEntries(journal, action: setJournalEntry),
             ),
-          );
+          ),
+          Expanded(
+            child: Container(
+              child: journalEntryDetails(journal.entries[index]),
+            ),
+          )
+        ],
+      ),
+    );
+
+    return journal.length == 0 ? journalEntries(journal) : longLayout;
   }
 }
