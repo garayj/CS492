@@ -5,10 +5,7 @@ import 'package:journal/components/settings_drawer.dart';
 import 'package:journal/models/journal_entry.dart';
 
 class JournalEntryDetails extends StatelessWidget {
-  JournalEntryDetails(this.handleDarkModeToggle);
-
   static final routeName = "details";
-  final void Function(bool) handleDarkModeToggle;
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +13,7 @@ class JournalEntryDetails extends StatelessWidget {
 
     return Scaffold(
       appBar: appBar(journalEntry.headerFormat),
-      endDrawer: SettingsDrawer(handleToggle: handleDarkModeToggle),
+      endDrawer: SettingsDrawer(),
       body: journalEntryDetails(journalEntry),
     );
   }

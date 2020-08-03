@@ -6,28 +6,15 @@ import 'package:journal/models/journal.dart';
 import 'package:journal/screens/journal_entry_detail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:sqflite/sqlite_api.dart';
 import 'package:journal/models/journal_entry.dart';
 
 class App extends StatefulWidget {
-  App({this.schema});
-  final String schema;
   // Route handler.
-  static Map<String, Widget Function(BuildContext)> routes(
-      handleDarkModeToggle) {
-    return {
-      // Main Entries route.
-      MainScreen.routeName: (context) => MainScreen(handleDarkModeToggle),
-
-      // Details route
-      JournalEntryDetails.routeName: (context) =>
-          JournalEntryDetails(handleDarkModeToggle),
-
-      // New journal entry route.
-      NewJournalEntry.routeName: (context) =>
-          NewJournalEntry(handleDarkModeToggle)
-    };
-  }
+  static Map routes = {
+    MainScreen.routeName: (context) => MainScreen(),
+    JournalEntryDetails.routeName: (context) => JournalEntryDetails(),
+    NewJournalEntry.routeName: (context) => NewJournalEntry(),
+  };
 
   @override
   AppState createState() => AppState();
@@ -58,19 +45,19 @@ class AppState extends State<App> {
 
   // Async function to set the theme.
   void initTheme() async {
-    schema = widget.schema;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() => isDarkMode = prefs.getBool('darkMode') ?? false);
+  }
+
+  void handleDarkModeToggle(bool input) async {
+    setState(() => isDarkMode = input);
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('darkMode', input);
   }
 
   @override
   Widget build(BuildContext context) {
     // Dark mode handler.
-    void Function(bool) handleDarkModeToggle = (bool input) async {
-      setState(() => isDarkMode = input);
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setBool('darkMode', input);
-    };
 
     // Get the appropriate theme.
     final getTheme = () =>
@@ -89,7 +76,7 @@ class AppState extends State<App> {
               visualDensity: VisualDensity.adaptivePlatformDensity,
             ),
             darkTheme: ThemeData.dark(),
-            routes: App.routes(handleDarkModeToggle),
+            routes: App.routes,
             themeMode: getTheme(),
           );
         }

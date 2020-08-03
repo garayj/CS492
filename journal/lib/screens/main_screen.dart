@@ -7,10 +7,8 @@ import 'package:journal/models/journal.dart';
 import 'package:journal/components/journal_entries.dart';
 
 class MainScreen extends StatefulWidget {
-  final void Function(bool) handleDarkModeToggle;
   static const String routeName = "/";
   static const String title = 'Journal';
-  MainScreen(this.handleDarkModeToggle);
 
   @override
   _MainScreen createState() => _MainScreen();
@@ -26,7 +24,7 @@ class _MainScreen extends State<MainScreen> {
 
     return Scaffold(
       appBar: appBar(MainScreen.title),
-      endDrawer: SettingsDrawer(handleToggle: widget.handleDarkModeToggle),
+      endDrawer: SettingsDrawer(),
       body: Container(
           child: LayoutBuilder(
         builder: (context, constraints) => constraints.maxWidth >= 600
