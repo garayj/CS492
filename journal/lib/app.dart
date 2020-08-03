@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:journal/models/databaseManager.dart';
 import 'package:journal/screens/new_journal_entry.dart';
 import 'package:journal/screens/main_screen.dart';
 import 'package:journal/models/journal.dart';
@@ -50,24 +51,9 @@ class AppState extends State<App> {
 
   void initJournal() async {
     journal = Journal.getInstance();
-    final Database db = await openDatabase(
-      'journal.sqlite3.db',
-      version: 1,
-      onCreate: (db, version) async => await db.execute(widget.schema),
-    );
-    List<Map> journalRecords =
-        await db.rawQuery('SELECT * FROM journal_entries;');
-
-    final journalEntries = journalRecords.map((record) {
-      return JournalEntry.init(
-        record['id'],
-        record['title'],
-        record['body'],
-        record['rating'],
-        DateTime.parse(record['date']),
-      );
-    }).toList();
-    journal.setJournal = journalEntries;
+    DatabaseManager dbManager = DatabaseManager.getInstance();
+    List<JournalEntry> journalRecords = await dbManager.getAllJournalEntries();
+    setState(() => journal.setJournal = journalRecords);
   }
 
   // Async function to set the theme.

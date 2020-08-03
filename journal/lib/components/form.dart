@@ -1,37 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:journal/components/journal_entries.dart';
+import 'package:journal/models/databaseManager.dart';
 import 'package:journal/models/journal_entry.dart';
 import 'package:journal/styles.dart';
-import 'package:journal/app.dart';
 import 'package:journal/components/text.dart';
-import 'package:sqflite/sqflite.dart';
 
 final styles = Styles();
 
 Widget raisedButton(_formKey, journalEntry, BuildContext context) {
-  Function addEntry = ModalRoute.of(context).settings.arguments;
-  AppState state = context.findAncestorStateOfType<AppState>();
+  Function saveEntryToState = ModalRoute.of(context).settings.arguments;
   return RaisedButton(
     onPressed: () async {
       if (_formKey.currentState.validate()) {
         _formKey.currentState.save();
         journalEntry.setDate = new DateTime.now();
-        final db = await openDatabase(
-          'journal.sqlite3.db',
-          version: 1,
-          onCreate: (db, version) async => await db.execute(state.schema),
-        );
-        await db.transaction((txn) async => await txn.rawInsert(
-              'INSERT INTO journal_entries(title, body, rating, date) VALUES(?, ?, ?, ?);',
-              [
-                journalEntry.title,
-                journalEntry.body,
-                journalEntry.rating,
-                journalEntry.date.toString()
-              ],
-            ));
-        await db.close();
-        addEntry(journalEntry);
+        final dbManager = DatabaseManager.getInstance();
+        dbManager.saveJournalEntryToDatabase(journalEntry);
+        saveEntryToState(journalEntry);
         Navigator.of(context).pop();
       }
     },
@@ -65,15 +49,14 @@ Widget Function(GlobalKey<FormState>, JournalEntry) form = (formKey,
                   validator: (value) {
                     if (value.isEmpty) {
                       return "cannont be empty";
-                    } else if (int.parse(value) > 5 || int.parse(value) < 1) {
-                      return 'Rating must be between 1 and 5';
+                    } else if (int.parse(value) > 4 || int.parse(value) < 1) {
+                      return 'Rating must be between 1 and 4';
                     }
                     return null;
                   }),
               Builder(
-                builder: (context) =>
-                    raisedButton(formKey, journalEntry, context),
-              ),
+                builder: (ctx) => raisedButton(formKey, journalEntry, ctx),
+              )
             ],
           ),
         ),

@@ -18,7 +18,7 @@ Widget journalEntries(Journal journal, {Function(int) action}) {
       itemBuilder: (context, index) => ListTile(
         onTap: onTap(context, index),
         title: Text('${journal.entries[index].title}'),
-        subtitle: Text('${journal.entries[index].body}'),
+        subtitle: Text('${journal.entries[index].listViewFormat}'),
       ),
     );
   } else

@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class JournalEntry {
   // For new journal entries.
   JournalEntry();
@@ -19,6 +21,8 @@ class JournalEntry {
   String get body => _body;
   int get rating => _rating;
   DateTime get date => _date;
+  String get listViewFormat => DateFormat.yMMMMEEEEd('en_US').format(_date);
+  String get headerFormat => DateFormat.yMMMMEEEEd('en_US').format(_date);
 
   // Setters.
   set setID(int id) => _id = id;

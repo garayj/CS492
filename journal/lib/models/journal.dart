@@ -12,9 +12,7 @@ class Journal {
     return _instance;
   }
 
-  void addJournalEntry(entry) {
-    _entries.add(entry);
-  }
+  void addJournalEntry(entry) => _entries.add(entry);
 
   List<JournalEntry> get entries => _entries;
   int get length => _entries.length;

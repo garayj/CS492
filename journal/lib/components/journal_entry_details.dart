@@ -9,6 +9,7 @@ Widget journalEntryDetails(JournalEntry journalEntry) {
       children: <Widget>[
         Text(journalEntry.title, style: TextStyle(fontSize: 30.0)),
         Text(journalEntry.body),
+        Text('Rating: ${journalEntry.rating.toString()}'),
       ],
     ),
   );

@@ -3,7 +3,6 @@ import 'package:journal/components/appBar.dart';
 import 'package:journal/components/journal_entry_details.dart';
 import 'package:journal/components/settings_drawer.dart';
 import 'package:journal/models/journal_entry.dart';
-import 'package:intl/intl.dart';
 
 class JournalEntryDetails extends StatelessWidget {
   JournalEntryDetails(this.handleDarkModeToggle);
@@ -14,14 +13,11 @@ class JournalEntryDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     JournalEntry journalEntry = ModalRoute.of(context).settings.arguments;
-    String formattedDate = DateFormat.yMMMMd('en_US').format(journalEntry.date);
-    Widget body = journalEntryDetails(journalEntry);
-    Widget endDrawer = SettingsDrawer(handleToggle: handleDarkModeToggle);
 
     return Scaffold(
-      appBar: appBar(formattedDate),
-      endDrawer: endDrawer,
-      body: body,
+      appBar: appBar(journalEntry.headerFormat),
+      endDrawer: SettingsDrawer(handleToggle: handleDarkModeToggle),
+      body: journalEntryDetails(journalEntry),
     );
   }
 }
