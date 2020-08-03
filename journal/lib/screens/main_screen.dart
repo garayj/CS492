@@ -17,10 +17,10 @@ class MainScreen extends StatefulWidget {
 class _MainScreen extends State<MainScreen> {
   final journal = Journal.getInstance();
 
+  void setNewEntry(entry) => setState(() => journal.addJournalEntry(entry));
   @override
   Widget build(BuildContext context) {
     // State handler
-    void setNewEntry(entry) => setState(() => journal.addJournalEntry(entry));
 
     return Scaffold(
       appBar: appBar(MainScreen.title),

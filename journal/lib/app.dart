@@ -36,6 +36,7 @@ class AppState extends State<App> {
     initJournal();
   }
 
+  // Init functions
   void initJournal() async {
     journal = Journal.getInstance();
     DatabaseManager dbManager = DatabaseManager.getInstance();
@@ -43,12 +44,12 @@ class AppState extends State<App> {
     setState(() => journal.setJournal = journalRecords);
   }
 
-  // Async function to set the theme.
   void initTheme() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() => isDarkMode = prefs.getBool('darkMode') ?? false);
   }
 
+  // state handler
   void handleDarkModeToggle(bool input) async {
     setState(() => isDarkMode = input);
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -57,8 +58,6 @@ class AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    // Dark mode handler.
-
     // Get the appropriate theme.
     final getTheme = () =>
         isDarkMode != null && isDarkMode ? ThemeMode.dark : ThemeMode.system;
@@ -67,26 +66,23 @@ class AppState extends State<App> {
     return FutureBuilder(
       future: Future.wait(
           [SharedPreferences.getInstance(), openDatabase('journal.sqlite.db')]),
-      builder: (_, snapshot) {
-        if (snapshot.hasData) {
-          return MaterialApp(
-            title: 'Flutter Demo',
-            theme: ThemeData(
-              primarySwatch: Colors.blue,
-              visualDensity: VisualDensity.adaptivePlatformDensity,
+      builder: (_, snapshot) => snapshot.hasData
+          ? MaterialApp(
+              title: 'Flutter Demo',
+              theme: ThemeData(
+                primarySwatch: Colors.blue,
+                visualDensity: VisualDensity.adaptivePlatformDensity,
+              ),
+              darkTheme: ThemeData.dark(),
+              routes: App.routes,
+              themeMode: getTheme(),
+            )
+          : Container(
+              color: Colors.white,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
             ),
-            darkTheme: ThemeData.dark(),
-            routes: App.routes,
-            themeMode: getTheme(),
-          );
-        }
-        return Container(
-          color: Colors.white,
-          child: Center(
-            child: CircularProgressIndicator(),
-          ),
-        );
-      },
     );
   }
 }
