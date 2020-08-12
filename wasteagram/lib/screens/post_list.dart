@@ -1,11 +1,15 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:wasteagram/components/appbar.dart';
+import 'package:wasteagram/models/firebase.dart';
+import 'package:wasteagram/models/translations.dart';
+import 'package:wasteagram/screens/new_post.dart';
 import '../models/post.dart';
 import '../models/post_dao.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_picker/image_picker.dart';
 
 class PostList extends StatefulWidget {
   static const routeName = "/";
-  static const title = "Wasteagram";
   const PostList({Key key}) : super(key: key);
 
   @override
@@ -13,63 +17,62 @@ class PostList extends StatefulWidget {
 }
 
 class _PostListState extends State<PostList> {
-  List<Post> posts = [];
-  @override
-  void initState() {
-    super.initState();
-    posts = [];
-    // posts = firestoreStuff ?? [];
-  }
+  File image;
 
-  void addPost(Post post) {
-    setState(() {
-      posts.add(post);
-    });
+  Future<void> _getImage() async {
+    PickedFile img = await ImagePicker().getImage(source: ImageSource.camera);
+    if (img == null) return;
+    image = File(img.path);
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    void _onTap(post) {
-      Navigator.of(context).pushNamed("details", arguments: post);
+    Locale locale = Localizations.localeOf(context);
+    void _onTap(post) =>
+        Navigator.of(context).pushNamed("details", arguments: post);
+
+    void _onPressed() async {
+      await _getImage();
+      if (image != null)
+        Navigator.pushNamed(context, NewPost.routeName, arguments: image);
+    }
+
+    Widget _builder(content, snapshot) {
+      if (snapshot.hasData && snapshot.data.documents.length > 0) {
+        List<Post> posts = PostDAO().convertToPosts(snapshot.data.documents);
+        return ListView.builder(
+          itemCount: posts.length,
+          itemBuilder: (context, index) => Semantics(
+            onTapHint: Translations(locale: locale).listOnTapHint(
+                PostDAO().longDate(posts[index].date), posts[index].quantity),
+            child: ListTile(
+              onTap: () => _onTap(posts[index]),
+              title: Text("${PostDAO().longDate(posts[index].date)}"),
+              trailing: Text("${posts[index].quantity}"),
+            ),
+          ),
+        );
+      } else {
+        return Center(child: CircularProgressIndicator());
+      }
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(PostList.title),
-      ),
+      appBar: appbar(context),
       body: StreamBuilder(
-        stream: Firestore.instance.collection('posts').snapshots(),
-        builder: (content, snapshot) {
-          if (snapshot.hasData) {
-            final posts = snapshot.data.documents;
-            return ListView.builder(
-              itemCount: posts.length,
-              itemBuilder: (context, index) => ListTile(
-                onTap: () => _onTap(PostDAO().convertToPost(posts[index])),
-                title: Text("${posts[index]['date']}"),
-                trailing: Text("${posts[index]['quantity']}"),
-              ),
-            );
-          } else {
-            return Center(child: CircularProgressIndicator());
-          }
-        },
+        stream: FireBase().streamPosts,
+        builder: _builder,
       ),
-      // body: posts.length == 0
-      //     ? Center(child: CircularProgressIndicator())
-      //     : ListView.builder(
-      //         itemCount: posts.length,
-      //         itemBuilder: (context, index) => ListTile(
-      //           onTap: () => _onTap(posts[index]),
-      //           title: Text("${posts[index].date}"),
-      //           trailing: Text("${posts[index].quantity}"),
-      //         ),
-      //       ),
-      bottomNavigationBar: FlatButton(
-        color: Colors.amber,
-        onPressed: () =>
-            Navigator.pushNamed(context, "newPost", arguments: addPost),
-        child: Icon(Icons.photo_camera),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: Semantics(
+        onTapHint: Translations(locale: locale).fabHintText,
+        enabled: true,
+        button: true,
+        child: FloatingActionButton(
+          onPressed: _onPressed,
+          child: Icon(Icons.photo_camera),
+        ),
       ),
     );
   }
