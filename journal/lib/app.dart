@@ -10,7 +10,7 @@ import 'package:journal/models/journal_entry.dart';
 
 class App extends StatefulWidget {
   // Route handler.
-  static Map routes = {
+  static final routes = {
     MainScreen.routeName: (context) => MainScreen(),
     JournalEntryDetails.routeName: (context) => JournalEntryDetails(),
     NewJournalEntry.routeName: (context) => NewJournalEntry(),

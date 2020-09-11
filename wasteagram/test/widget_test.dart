@@ -32,7 +32,7 @@ void main() {
           DateFormat.yMMMMEEEEd("en_US").format(postDate));
     });
     test("Post Constructor", () {
-      final date = DateTime.now();
+      final date = DateTime.now().toString();
       final url =
           'https://images.squarespace-cdn.com/content/v1/5cb62a904d546e33119fa495/1589302981165-HHQ2A4JI07C43294HVPD/ke17ZwdGBToddI8pDm48kA7bHnZXCqgRu4g0_U7hbNpZw-zPPgdn4jUwVcJE1ZvWQUxwkmyExglNqGp0IvTJZamWLI2zvYWH8K3-s_4yszcp2ryTI0HqTOaaUohrI8PISCdr-3EAHMyS8K84wLA7X0UZoBreocI4zSJRMe1GOxcKMshLAGzx4R3EDFOm1kBS/fluffy+corgi';
       final quantity = 4;
